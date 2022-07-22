@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { makeRandomNumber } from "../utils";
 
 function Ticker() {
-  const [price, setPrice] = useState(0);
+  const [price, setPrice] = useState(0)
   const [color, setColor] = useState("black");
+
+  const prevPriceRef = useRef(price)
 
   useEffect(() => {
     const id = setInterval(() => setPrice(makeRandomNumber), 1000);
@@ -11,6 +13,21 @@ function Ticker() {
       clearInterval(id);
     };
   }, []);
+
+  useEffect(() =>{
+    //use the current value of the ref
+
+    const prevPrice = prevPriceRef.current
+    if(price > prevPrice){
+      setColor("green")
+    } else if(price < prevPrice){
+      setColor("red")
+    }
+    //set the new value of the ref(note: this does not trigger a re-render)
+
+    prevPriceRef.current = price;
+
+  },[price])
 
   return (
     <div>
